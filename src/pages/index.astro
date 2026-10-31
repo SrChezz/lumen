@@ -1,0 +1,128 @@
+---
+import "@fontsource-variable/bricolage-grotesque";
+import "@fontsource/ibm-plex-sans/400.css";
+import "@fontsource/ibm-plex-sans/500.css";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
+import "../styles/lumen.css";
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <title>Lumen</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <script is:inline>
+    try {
+      const t = localStorage.getItem("lumen:theme");
+      if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+    } catch {}
+  </script>
+</head>
+<body>
+  <main id="app" data-state="empty" data-fit="page">
+    <section id="empty" aria-labelledby="wordmark">
+      <header class="corner top">
+        <h1 id="wordmark">Lumen</h1>
+        <p class="muted">A quiet room for your PDFs.</p>
+      </header>
+
+      <button id="mount" class="mount" type="button" aria-describedby="mount-hint">
+        <span class="window">
+          <span class="drop-title">Drop a PDF</span>
+          <span id="mount-hint" class="drop-hint">or <u>choose a file</u> from your computer</span>
+        </span>
+      </button>
+
+      <p id="error" class="error" role="alert" hidden></p>
+
+      <footer class="corner bottom">
+        <p class="muted keys-hint">
+          <kbd>?</kbd> shortcuts <span class="dot">·</span> <kbd>O</kbd> open <span class="dot">·</span> <kbd>T</kbd> theme
+        </p>
+        <button id="sample" class="text-button" type="button">Open the sample deck <span aria-hidden="true">→</span></button>
+      </footer>
+    </section>
+
+    <section id="stage" aria-live="polite" aria-label="Page"></section>
+
+    <div id="progress" aria-hidden="true"><span></span></div>
+
+    <nav id="hud" aria-label="Viewer controls">
+      <button class="icon" id="prev" type="button" aria-label="Previous page" title="Previous page (←)">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" /></svg>
+      </button>
+      <span id="count" class="count" aria-live="off"><b id="count-now">1</b><i>/</i><span id="count-all">1</span></span>
+      <button class="icon" id="next" type="button" aria-label="Next page" title="Next page (→)">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5" /></svg>
+      </button>
+      <span class="rule" aria-hidden="true"></span>
+      <button class="icon" id="grid" type="button" aria-label="All pages" title="All pages (G)">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3.5" y="3.5" width="5" height="5" rx="1" /><rect x="11.5" y="3.5" width="5" height="5" rx="1" /><rect x="3.5" y="11.5" width="5" height="5" rx="1" /><rect x="11.5" y="11.5" width="5" height="5" rx="1" /></svg>
+      </button>
+      <button class="icon" id="fit" type="button" aria-label="Fit width" title="Fit width (F)">
+        <svg class="fit-page" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7V4h3M14 4h3v3M17 13v3h-3M6 16H3v-3" /></svg>
+        <svg class="fit-width" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h14M6 7l-3 3 3 3M14 7l3 3-3 3" /></svg>
+      </button>
+      <button class="icon" id="theme" type="button" aria-label="Switch theme" title="Light table or dark room (T)">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="6" /><path d="M10 4a6 6 0 0 1 0 12z" class="fill" /></svg>
+      </button>
+      <button class="icon" id="open" type="button" aria-label="Open another PDF" title="Open another PDF (O)">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 13V3.5M6 7.5l4-4 4 4M4 12.5v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3" /></svg>
+      </button>
+      <button class="icon" id="help-btn" type="button" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" /><path d="M8 8a2 2 0 1 1 2.8 1.8c-.5.3-.8.7-.8 1.2v.5" /><circle cx="10" cy="14.2" r=".4" class="fill" /></svg>
+      </button>
+    </nav>
+
+    <output id="jump" class="chip" hidden></output>
+    <output id="toast" class="chip" hidden></output>
+
+    <div id="blank" hidden></div>
+
+    <div id="veil" hidden>
+      <div class="veil-frame"><span>Drop to open</span></div>
+    </div>
+
+    <dialog id="overview" aria-labelledby="overview-title">
+      <header class="sheet-head">
+        <h2 id="overview-title">All pages</h2>
+        <span id="overview-meta" class="muted mono"></span>
+        <button class="icon" type="button" data-close aria-label="Close">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15" /></svg>
+        </button>
+      </header>
+      <ol id="thumbs" class="thumbs"></ol>
+    </dialog>
+
+    <dialog id="help" aria-labelledby="help-title" autofocus>
+      <header class="sheet-head">
+        <h2 id="help-title">Shortcuts</h2>
+        <button class="icon" type="button" data-close aria-label="Close">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15" /></svg>
+        </button>
+      </header>
+      <dl class="shortcuts">
+        <dt><kbd>→</kbd> <kbd>Space</kbd> <kbd>PgDn</kbd></dt><dd>Next page</dd>
+        <dt><kbd>←</kbd> <kbd>⇧ Space</kbd> <kbd>PgUp</kbd></dt><dd>Previous page</dd>
+        <dt><kbd>Home</kbd> <kbd>End</kbd></dt><dd>First or last page</dd>
+        <dt><kbd>12</kbd> <kbd>Enter</kbd></dt><dd>Go to page 12</dd>
+        <dt><kbd>G</kbd></dt><dd>All pages</dd>
+        <dt><kbd>F</kbd></dt><dd>Fit page or fit width</dd>
+        <dt><kbd>B</kbd> <kbd>W</kbd></dt><dd>Black or white screen</dd>
+        <dt><kbd>T</kbd></dt><dd>Light table or dark room</dd>
+        <dt><kbd>O</kbd></dt><dd>Open another PDF</dd>
+      </dl>
+      <p class="muted small">Click the right side of a page to go forward and the left side to go back. On a phone, swipe.</p>
+    </dialog>
+
+    <input id="file" type="file" accept="application/pdf,.pdf" hidden />
+  </main>
+
+  <script>
+    import "../scripts/viewer.ts";
+  </script>
+</body>
+</html>

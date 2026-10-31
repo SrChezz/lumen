@@ -1,0 +1,23 @@
+{
+  "name": "lumen",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "prepare-assets": "node scripts/prepare-assets.mjs",
+    "dev": "node scripts/prepare-assets.mjs && astro dev",
+    "build": "node scripts/prepare-assets.mjs && astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "5.3.0",
+    "@fontsource/ibm-plex-mono": "5.3.0",
+    "@fontsource/ibm-plex-sans": "5.3.0",
+    "astro": "7.3.8",
+    "pdfjs-dist": "6.4.299"
+  },
+  "devDependencies": {
+    "pdf-lib": "1.17.1",
+    "typescript": "5.9.3"
+  }
+}
