@@ -38,6 +38,11 @@ import "../styles/lumen.css";
 
       <p id="error" class="error" role="alert" hidden></p>
 
+      <p id="reopen-row" class="reopen" hidden>
+        <button id="reopen" class="text-button" type="button">Reopen <b></b> <span aria-hidden="true">→</span></button>
+        <button id="forget" class="forget" type="button">Forget it</button>
+      </p>
+
       <footer class="corner bottom">
         <p class="muted keys-hint">
           <kbd>?</kbd> shortcuts <span class="dot">·</span> <kbd>O</kbd> open <span class="dot">·</span> <kbd>T</kbd> theme
@@ -58,6 +63,24 @@ import "../styles/lumen.css";
       <button class="icon" id="next" type="button" aria-label="Next page" title="Next page (→)">
         <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5" /></svg>
       </button>
+      <span class="rule" aria-hidden="true"></span>
+      <button class="icon" id="pen" type="button" aria-label="Pen" aria-pressed="false" title="Pen (P)">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M13.5 3.5l3 3L7 16H4v-3z" /><path d="M11.5 5.5l3 3" /></svg>
+      </button>
+      <button class="icon" id="marker" type="button" aria-label="Highlighter" aria-pressed="false" title="Highlighter (H)">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12 3.5l4.5 4.5-6 6L6 9.5z" /><path d="M6 9.5 4.5 14l1.5 1.5L10.5 14M3 17h6" /></svg>
+      </button>
+      <span class="ink-tools">
+        <button class="icon" id="color" type="button" aria-label="Color" title="Color (C)">
+          <span class="swatch" aria-hidden="true"></span>
+        </button>
+        <button class="icon" id="undo" type="button" aria-label="Undo last mark" title="Undo last mark (Z)">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5.5 3.5 9 7 12.5" /><path d="M3.5 9H12a4.5 4.5 0 0 1 0 9h-2" /></svg>
+        </button>
+        <button class="icon" id="erase" type="button" aria-label="Erase marks on this page" title="Erase marks on this page (E)">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8 16.5h8.5M3.9 12.1l7.2-7.2a1.5 1.5 0 0 1 2.1 0l2.9 2.9a1.5 1.5 0 0 1 0 2.1L10 16.5H8.3l-4.4-4.4z" /><path d="M7.5 8.5l4 4" /></svg>
+        </button>
+      </span>
       <span class="rule" aria-hidden="true"></span>
       <button class="icon" id="grid" type="button" aria-label="All pages" title="All pages (G)">
         <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3.5" y="3.5" width="5" height="5" rx="1" /><rect x="11.5" y="3.5" width="5" height="5" rx="1" /><rect x="3.5" y="11.5" width="5" height="5" rx="1" /><rect x="11.5" y="11.5" width="5" height="5" rx="1" /></svg>
@@ -115,7 +138,16 @@ import "../styles/lumen.css";
         <dt><kbd>T</kbd></dt><dd>Light table or dark room</dd>
         <dt><kbd>O</kbd></dt><dd>Open another PDF</dd>
       </dl>
-      <p class="muted small">Click the right side of a page to go forward and the left side to go back. On a phone, swipe.</p>
+      <h3 class="shortcuts-head">Marking up</h3>
+      <dl class="shortcuts">
+        <dt><kbd>P</kbd></dt><dd>Pen on or off</dd>
+        <dt><kbd>H</kbd></dt><dd>Highlighter on or off</dd>
+        <dt><kbd>C</kbd></dt><dd>Next color</dd>
+        <dt><kbd>Z</kbd> <kbd>⌘Z</kbd></dt><dd>Undo last mark</dd>
+        <dt><kbd>E</kbd></dt><dd>Erase marks on this page</dd>
+        <dt><kbd>Esc</kbd></dt><dd>Put the pen down</dd>
+      </dl>
+      <p class="muted small">Click the right side of a page to go forward and the left side to go back. On a phone, swipe. Marks stay with each page until you close the tab.</p>
     </dialog>
 
     <input id="file" type="file" accept="application/pdf,.pdf" hidden />

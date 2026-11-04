@@ -18,6 +18,10 @@ Most PDF viewers are made for reading. Lumen is made for presenting. It shows on
 - **Overview:** <kbd>G</kbd> shows a grid of every page; click one to jump to it.
 - **Black or white screen:** <kbd>B</kbd> or <kbd>W</kbd> blanks the screen, like a projector remote does. Any key brings the page back.
 - **Two themes:** *light table* and *dark room*. Lumen follows your system theme, and <kbd>T</kbd> switches it.
+- **Pen and highlighter:** <kbd>P</kbd> or <kbd>H</kbd> to mark up a slide while you talk, <kbd>C</kbd> to change color, <kbd>Z</kbd> to undo. Marks stay on their page until you close the tab.
+- **Working links:** links inside the PDF work. Links to another page jump there, and web links open in a new tab.
+- **Page in the address:** the address ends in `#page=N`, so you can link to a slide. Back and Forward undo jumps.
+- **Survives a reload:** a PDF you opened from disk is kept in this browser (up to 100 MB), so reloading the tab brings it back on the same page. In a new tab, Lumen offers to reopen it.
 - **Remembers your place:** reopen a file and you're back on the page you left.
 - **Touch support:** swipe to change pages; tap the center to show the controls.
 - **Private:** your PDF is read in the browser and never uploaded anywhere.
@@ -41,8 +45,14 @@ Most PDF viewers are made for reading. Lumen is made for presenting. It shows on
 | <kbd>T</kbd> | Light table or dark room |
 | <kbd>O</kbd> | Open another PDF |
 | <kbd>?</kbd> | Show the shortcuts |
+| <kbd>P</kbd> | Pen on or off |
+| <kbd>H</kbd> | Highlighter on or off |
+| <kbd>C</kbd> | Next pen color (red, amber, blue, green, black) |
+| <kbd>Z</kbd> or <kbd>⌘Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Z</kbd> | Undo the last mark |
+| <kbd>E</kbd> | Erase all marks on this page |
+| <kbd>Esc</kbd> | Put the pen down |
 
-With the mouse, click the left 35% of a page to go back and anywhere else to go forward.
+With the mouse, click the left 35% of a page to go back and anywhere else to go forward. While the pen is in hand, clicks draw instead, and the arrow keys still change pages.
 
 ## Getting started
 
@@ -76,6 +86,8 @@ Add `?file=` to the address to open a PDF when the page loads:
 http://localhost:4321/?file=/sample.pdf
 ```
 
+Add `#page=N` to start on a given page: `?file=/sample.pdf#page=3`.
+
 The PDF has to be on the same origin, or on a server that sends CORS headers that allow it, because the browser fetches it directly.
 
 ## Deploying
@@ -93,7 +105,9 @@ The PDF has to be on the same origin, or on a server that sends CORS headers tha
 src/
   pages/index.astro     markup: empty state, stage, floating controls, dialogs
   styles/lumen.css      design tokens and both themes
-  scripts/viewer.ts     all behavior: loading, rendering, cache, keys, touch
+  scripts/viewer.ts     loading, rendering, cache, links, address, keys, touch
+  scripts/ink.ts        the pen and highlighter layer
+  scripts/saved-file.ts keeps the last local PDF in IndexedDB
 scripts/
   prepare-assets.mjs    copies pdf.js font data and builds the sample deck
 public/
@@ -101,13 +115,19 @@ public/
   favicon.svg
 ```
 
-Each page renders to a canvas at `devicePixelRatio`. CSS (`max-width` and `max-height: 100%`) fits the canvas to the tab, so it fills the space instantly while the sharp re-render waits until you stop resizing. Up to eight rendered pages stay in a small LRU cache.
+Each page renders to a canvas at `devicePixelRatio`, inside a "sheet" that CSS sizes to the page's shape with container query units, so it fills the tab instantly while the sharp re-render waits until you stop resizing. The sheet also holds the link layer and the ink canvas. Ink points are stored as fractions of the page, so marks stay in place when the page is resized or the fit mode changes. Up to eight rendered pages stay in a small LRU cache.
 
 The design uses one accent color, `--lamp`, an amber like a projector lamp, and uses it sparingly: for focus rings, the progress bar, the current page in the overview and drop targets.
 
 ## Privacy
 
-Lumen has no backend, analytics or tracking. A PDF you open is read in your browser. The only data Lumen stores is a few preferences in `localStorage` (theme, fit mode and the last page of each file). If storage is blocked, Lumen still works and just doesn't remember them.
+Lumen has no backend, analytics or tracking. A PDF you open is read in your browser. Lumen stores, all in your browser:
+
+- a few preferences in `localStorage`: theme, fit mode and the last page of each file;
+- the last PDF you opened from disk, in IndexedDB, so a reload can bring it back. **Forget it** on the start screen deletes it;
+- your pen marks, in `sessionStorage`, which the browser clears when you close the tab.
+
+If storage is blocked, Lumen still works and just doesn't remember them.
 
 ## License
 
